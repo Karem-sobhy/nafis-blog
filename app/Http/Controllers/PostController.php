@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
-use App\Models\Post;
 
 class PostController extends Controller
 {
@@ -13,7 +15,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::get();
+        // return Post::where('user_id',Auth::id())->get();
+        return Auth::user()->posts;
     }
 
     /**
@@ -21,7 +24,13 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        return Post::create($request->validated());
+    //     $user = Auth::user();
+    //     $userPosts = $user->posts();
+    //     $userPosts->create($request->validated());
+
+       $post = Auth::user()->posts()->create($request->validated());
+       $post->load('user:id,name');
+       return $post;
     }
 
     /**
@@ -29,7 +38,11 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return $post;
+        if($post->user_id != Auth::id()){
+            abort(403, 'You are not authorized to view this post');
+        }
+
+        return $post->load('user:id,name');
     }
 
     /**
