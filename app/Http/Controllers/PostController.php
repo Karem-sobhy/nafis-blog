@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 
@@ -15,8 +16,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        // return Post::where('user_id',Auth::id())->get();
-        return Auth::user()->posts;
+        return Post::with(['user:id,name','comments:id,post_id,user_id,content','comments.user:id,name'])->latest('id')->get();
     }
 
     /**
@@ -24,13 +24,13 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-    //     $user = Auth::user();
-    //     $userPosts = $user->posts();
-    //     $userPosts->create($request->validated());
+        do {
+            $slug = Str::slug($request->title).'-'.Str::lower(Str::random(5));
+        } while (Post::where('slug', $slug)->exists());
 
-       $post = Auth::user()->posts()->create($request->validated());
-       $post->load('user:id,name');
-       return $post;
+        return Auth::user()
+            ->posts()
+            ->create(array_merge($request->validated(), ['slug' => $slug]));
     }
 
     /**
@@ -38,11 +38,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        if($post->user_id != Auth::id()){
-            abort(403, 'You are not authorized to view this post');
-        }
-
-        return $post->load('user:id,name');
+        return $post->load(['user:id,name','comments:id,post_id,user_id,content','comments.user:id,name']);
     }
 
     /**
@@ -59,7 +55,10 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        Gate::authorize('delete', $post);
+
         $post->delete();
+
         return response()->json('Post deleted successfully');
     }
 }

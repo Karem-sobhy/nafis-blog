@@ -25,7 +25,7 @@ class StorePostRequest extends FormRequest
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'is_published' => 'sometimes|boolean',
-            'slug' => 'required|string|max:255|unique:posts',
+            // 'slug' => 'required|alpha_dash|max:255|unique:posts',
         ];
     }
 }
