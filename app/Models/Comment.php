@@ -12,6 +12,7 @@ class Comment extends Model
 
     protected $fillable = ['user_id', 'post_id', 'content'];
     protected $hidden = ['user_id','post_id'];
+    protected $touches = ['post'];
 
     public function user() : BelongsTo
     {

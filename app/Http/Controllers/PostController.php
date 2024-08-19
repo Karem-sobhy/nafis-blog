@@ -16,7 +16,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::with(['user:id,name'])->withCount('comments')->latest('id')->get();
+        return Post::with(['user:id,name'])->withCount('comments')->latest('updated_at')->get();
     }
 
     /**
