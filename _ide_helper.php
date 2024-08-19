@@ -18166,6 +18166,96 @@ namespace Illuminate\Support\Facades {
             }
     }
 
+namespace BeyondCode\ServerTiming\Facades {
+            /**
+     * 
+     *
+     * @see \BeyondCode\ServerTiming\ServerTiming
+     */        class ServerTiming {
+                    /**
+         * 
+         *
+         * @static 
+         */        public static function addMetric($metric)
+        {
+                        /** @var \BeyondCode\ServerTiming\ServerTiming $instance */
+                        return $instance->addMetric($metric);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */        public static function hasStartedEvent($key)
+        {
+                        /** @var \BeyondCode\ServerTiming\ServerTiming $instance */
+                        return $instance->hasStartedEvent($key);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */        public static function measure($key)
+        {
+                        /** @var \BeyondCode\ServerTiming\ServerTiming $instance */
+                        return $instance->measure($key);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */        public static function start($key)
+        {
+                        /** @var \BeyondCode\ServerTiming\ServerTiming $instance */
+                        return $instance->start($key);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */        public static function stop($key)
+        {
+                        /** @var \BeyondCode\ServerTiming\ServerTiming $instance */
+                        return $instance->stop($key);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */        public static function stopAllUnfinishedEvents()
+        {
+                        /** @var \BeyondCode\ServerTiming\ServerTiming $instance */
+                        return $instance->stopAllUnfinishedEvents();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */        public static function setDuration($key, $duration)
+        {
+                        /** @var \BeyondCode\ServerTiming\ServerTiming $instance */
+                        return $instance->setDuration($key, $duration);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */        public static function getDuration($key)
+        {
+                        /** @var \BeyondCode\ServerTiming\ServerTiming $instance */
+                        return $instance->getDuration($key);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */        public static function events()
+        {
+                        /** @var \BeyondCode\ServerTiming\ServerTiming $instance */
+                        return $instance->events();
+        }
+            }
+    }
+
 namespace Illuminate\Http {
             /**
      * 
@@ -21913,6 +22003,7 @@ namespace  {
             class Validator extends \Illuminate\Support\Facades\Validator {}
             class View extends \Illuminate\Support\Facades\View {}
             class Vite extends \Illuminate\Support\Facades\Vite {}
+            class Stopwatch extends \BeyondCode\ServerTiming\Facades\ServerTiming {}
     }
 
 
