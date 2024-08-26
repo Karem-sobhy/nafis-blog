@@ -27,6 +27,7 @@ class PostResource extends JsonResource
             'image_thumb' => $this->getFirstMediaUrl('header', 'thumb'),
             'user' => UserResource::make($this->whenLoaded('user')),
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
+            'last_comment' => CommentResource::make($this->whenLoaded('latestComment')),
         ];
     }
 }

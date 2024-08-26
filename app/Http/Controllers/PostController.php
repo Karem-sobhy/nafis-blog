@@ -18,10 +18,8 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
-        $posts = Post::with(['user:id,name'])
-            ->with('media')
+        $posts = Post::with(['user:id,name', 'latestComment.user', 'media'])
             ->withCount('comments')
-            ->with(['comments' => fn ($q) => $q->latest('id')->limit(1)])
             ->orderBy('updated_at', in_array($request->input('sort'), ['asc', 'desc']) ? $request->input('sort') : 'desc')
             ->paginate();
 
