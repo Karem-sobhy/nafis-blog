@@ -11,7 +11,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('posts', PostController::class)->scoped([
         'post' => 'slug'
     ]);
-    Route::apiResource('posts.comments', CommentController::class)->scoped([
+
+    Route::apiResource('posts.comments', CommentController::class)->only('store','update','destroy')->scoped([
         'post' => 'slug'
     ]);
 });
