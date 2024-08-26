@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class UpdatePostRequest extends FormRequest
 {
@@ -27,6 +28,7 @@ class UpdatePostRequest extends FormRequest
             'content' => 'sometimes|string',
             'is_published' => 'sometimes|boolean',
             // 'slug' => 'sometimes|alpha_dash|max:255|unique:posts',
+            'image' => ['nullable', Rule::file()->image()->max('2mb')],
         ];
     }
 }

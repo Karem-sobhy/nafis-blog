@@ -11,15 +11,17 @@ class Comment extends Model
     use HasFactory;
 
     protected $fillable = ['user_id', 'post_id', 'content'];
-    protected $hidden = ['user_id','post_id'];
+
+    protected $hidden = ['user_id', 'post_id'];
+
     protected $touches = ['post'];
 
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function post() : BelongsTo
+    public function post(): BelongsTo
     {
         return $this->belongsTo(Post::class);
     }

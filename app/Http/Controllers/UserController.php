@@ -47,7 +47,8 @@ class UserController extends Controller
         //
     }
 
-    public function test(Request $request){
+    public function test(Request $request)
+    {
         return $request->user();
     }
 }

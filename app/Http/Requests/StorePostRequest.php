@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePostRequest extends FormRequest
 {
@@ -26,6 +27,7 @@ class StorePostRequest extends FormRequest
             'content' => 'required|string',
             'is_published' => 'sometimes|boolean',
             // 'slug' => 'required|alpha_dash|max:255|unique:posts',
+            'image' => ['sometimes', Rule::file()->image()->max('2mb')],
         ];
     }
 }

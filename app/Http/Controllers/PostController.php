@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Resources\PostResource;
+use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -16,7 +17,14 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::with(['user:id,name'])->withCount('comments')->latest('updated_at')->get();
+        $posts = Post::with(['user:id,name'])
+            ->with('media')
+            ->withCount('comments')
+            ->with(['comments' => fn ($q) => $q->latest('id')->limit(1)])
+            ->latest('updated_at')
+            ->paginate();
+
+        return PostResource::collection($posts);
     }
 
     /**
@@ -28,9 +36,17 @@ class PostController extends Controller
             $slug = Str::slug($request->title).'-'.Str::lower(Str::random(5));
         } while (Post::where('slug', $slug)->exists());
 
-        return Auth::user()
+        $post = Auth::user()
             ->posts()
             ->create(array_merge($request->validated(), ['slug' => $slug]));
+
+        if ($request->hasFile('image')) {
+            $post->addMediaFromRequest('image')
+                ->sanitizingFileName(fn ($fileName) => Str::uuid7().'.'.Str::afterLast($fileName, '.'))
+                ->toMediaCollection('header');
+        }
+
+        return PostResource::make($post);
     }
 
     /**
@@ -38,7 +54,9 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return $post->load(['user:id,name','comments:id,post_id,user_id,content','comments.user:id,name']);
+        $post->load(['user:id,name', 'comments', 'comments.user:id,name', 'media']);
+
+        return PostResource::make($post);
     }
 
     /**
@@ -46,8 +64,17 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        $post->update($request->validated());
-        return $post;
+        $post->update(array_merge($request->validated()));
+
+        $request->whenHas('image', function ($image) use ($post) {
+            $image
+            ? $post->addMedia($image)
+                ->sanitizingFileName(fn ($fileName) => Str::uuid7().'.'.Str::afterLast($fileName, '.'))
+                ->toMediaCollection('header')
+            : $post->clearMediaCollection('header');
+        });
+
+        return PostResource::make($post);
     }
 
     /**

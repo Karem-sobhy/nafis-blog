@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\Auth\LoginRequest;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -20,7 +19,7 @@ class AuthenticatedSessionController extends Controller
 
         $token = Auth::user()->createToken('web');
 
-        return response()->json(['message'=>'logged in successfully','token'=> $token->plainTextToken]);
+        return response()->json(['message' => 'logged in successfully', 'token' => $token->plainTextToken]);
     }
 
     /**

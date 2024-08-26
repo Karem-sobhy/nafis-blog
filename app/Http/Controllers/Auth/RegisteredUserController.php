@@ -7,8 +7,6 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
 class RegisteredUserController extends Controller
@@ -29,7 +27,7 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password
+            'password' => $request->password,
         ]);
 
         event(new Registered($user));
@@ -38,7 +36,7 @@ class RegisteredUserController extends Controller
 
         return response()->json([
             'message' => 'User registered successfully',
-            'token' => $token
+            'token' => $token,
         ], Response::HTTP_CREATED);
     }
 }
