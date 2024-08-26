@@ -6,6 +6,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -15,13 +16,13 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $posts = Post::with(['user:id,name'])
             ->with('media')
             ->withCount('comments')
             ->with(['comments' => fn ($q) => $q->latest('id')->limit(1)])
-            ->latest('updated_at')
+            ->orderBy('updated_at', in_array($request->input('sort'), ['asc', 'desc']) ? $request->input('sort') : 'desc')
             ->paginate();
 
         return PostResource::collection($posts);
