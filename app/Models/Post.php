@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\MediaLibrary\HasMedia;
@@ -40,9 +41,14 @@ class Post extends Model implements HasMedia
         return $this->hasMany(Comment::class);
     }
 
-    public function latestComment() : HasOne
+    public function latestComment(): HasOne
     {
         return $this->hasOne(Comment::class)->latestOfMany();
+    }
+
+    public function likes(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'post_user_like')->withTimestamps();
     }
 
     public function registerMediaCollections(): void

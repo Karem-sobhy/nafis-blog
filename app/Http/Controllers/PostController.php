@@ -19,11 +19,24 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $posts = Post::with(['user:id,name', 'latestComment.user', 'media'])
-            ->withCount('comments')
+            ->withCount(['comments', 'likes'])
+            ->withExists(['likes' => fn ($q) => $q->where('user_id', Auth::id())])
+            ->when($request->filled('search'), fn ($q) => $q->whereAny(['title', 'content'], 'LIKE', "%{$request->input('search')}%"))
+            ->when($request->filled('user_id'), fn ($q) => $q->where('user_id', $request->integer('user_id')))
             ->orderBy('updated_at', in_array($request->input('sort'), ['asc', 'desc']) ? $request->input('sort') : 'desc')
             ->paginate();
 
         return PostResource::collection($posts);
+    }
+
+    public function like(Post $post)
+    {
+        $toggle = $post->likes()->toggle(Auth::id());
+        if (count($toggle['attached'])) {
+            return response()->json(['Post like added']);
+        }
+
+        return response()->json(['Post like removed']);
     }
 
     /**
@@ -53,7 +66,9 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $post->load(['user:id,name', 'comments', 'comments.user:id,name', 'media']);
+        $post->load(['user:id,name', 'comments', 'comments.user:id,name', 'media', 'likes'])
+            ->loadExists(['likes' => fn ($q) => $q->where('user_id', Auth::id())])
+            ->loadCount('likes');
 
         return PostResource::make($post);
     }
