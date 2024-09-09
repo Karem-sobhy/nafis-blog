@@ -38,12 +38,12 @@ class Post extends Model implements HasMedia
 
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(Comment::class)->onlyParents();
     }
 
     public function latestComment(): HasOne
     {
-        return $this->hasOne(Comment::class)->latestOfMany();
+        return $this->hasOne(Comment::class)->ofMany(['id' => 'max'], fn ($commentQuery) => $commentQuery->onlyParents());
     }
 
     public function likes(): BelongsToMany

@@ -66,7 +66,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $post->load(['user:id,name', 'comments', 'comments.user:id,name', 'media', 'likes'])
+        $post->load(['user:id,name', 'comments.children', 'comments.user:id,name', 'media', 'likes'])
             ->loadExists(['likes' => fn ($q) => $q->where('user_id', Auth::id())])
             ->loadCount('likes');
 

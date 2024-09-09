@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCommentRequest extends FormRequest
 {
@@ -15,6 +16,7 @@ class StoreCommentRequest extends FormRequest
     {
         return [
             'content' => 'required|string|max:255',
+            'parent_id' => ['nullable', Rule::exists('comments', 'id')->where('post_id', $this->route('post')->id)],
         ];
     }
 }

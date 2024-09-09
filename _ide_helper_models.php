@@ -18,18 +18,23 @@ namespace App\Models{
  * @property int $id
  * @property int $post_id
  * @property int $user_id
+ * @property int|null $parent_id
  * @property string $content
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Comment> $children
+ * @property-read int|null $children_count
  * @property-read \App\Models\Post $post
  * @property-read \App\Models\User $user
  * @method static \Database\Factories\CommentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Comment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Comment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment onlyParents()
  * @method static \Illuminate\Database\Eloquent\Builder|Comment query()
  * @method static \Illuminate\Database\Eloquent\Builder|Comment whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Comment whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Comment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereParentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Comment wherePostId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Comment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Comment whereUserId($value)
