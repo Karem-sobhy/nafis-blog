@@ -46,6 +46,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Post::class, 'post_user_like')->withTimestamps();
     }
 
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class)->chaperone('user');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

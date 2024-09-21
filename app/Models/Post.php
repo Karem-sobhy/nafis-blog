@@ -38,7 +38,7 @@ class Post extends Model implements HasMedia
 
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class)->onlyParents();
+        return $this->hasMany(Comment::class);
     }
 
     public function latestComment(): HasOne

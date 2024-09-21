@@ -7,11 +7,31 @@ use App\Http\Requests\UpdateCommentRequest;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use App\Models\Post;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class CommentController extends Controller
 {
+    public function index(Request $request)
+    {
+        $comments = Auth::user()
+            ->comments()
+            ->onlyParents()
+            ->when($request->filled('search'), fn ($q) => $q->where('content', 'LIKE', "%{$request->input('search')}%"))
+            ->orderBy('updated_at', in_array($request->input('sort'), ['asc', 'desc']) ? $request->input('sort') : 'desc')
+            ->with([
+                'children',
+                'post' => fn ($q) => $q
+                    ->with(['user:id,name', 'latestComment.user', 'media'])
+                    ->withExists(['likes' => fn ($q) => $q->where('user_id', Auth::id())])
+                    ->withCount(['comments', 'likes']),
+            ])
+            ->paginate();
+
+        return CommentResource::collection($comments);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
